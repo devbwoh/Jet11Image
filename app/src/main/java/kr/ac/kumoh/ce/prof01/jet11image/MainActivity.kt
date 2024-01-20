@@ -7,12 +7,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -71,26 +73,27 @@ fun MainScreen(viewModel: CardDealerViewModel = viewModel()) {
 @Composable
 fun ColumnScope.CardImageSection() {
     val viewModel: CardDealerViewModel = viewModel()
+    BoxWithConstraints(Modifier.weight(1F)) {
+        val offsetX = (maxWidth / viewModel.cards.size)
 
-    if (LocalConfiguration.current.orientation
-            == Configuration.ORIENTATION_LANDSCAPE) {
-        Row(Modifier.weight(1F)) {
-            viewModel.cards.map {
-                CardImage(it)
-            }
-        }
-    } else {
-        Column(Modifier.weight(1F)) {
-            Row(Modifier.weight(1F).fillMaxSize()) {
-                CardImage(viewModel.cards[0])
-                CardImage(viewModel.cards[1])
-            }
-            Row(Modifier.weight(1F).fillMaxSize()) {
-                CardImage(viewModel.cards[2])
-                CardImage(viewModel.cards[3])
-            }
-            Row(Modifier.weight(1F).fillMaxSize()) {
-                CardImage(viewModel.cards[4])
+        viewModel.cards.mapIndexed { index, card ->
+            Box(
+                Modifier
+                    .fillMaxHeight()
+                    .offset(x = offsetX * index)
+            ) {
+                if (LocalConfiguration.current.orientation
+                    == Configuration.ORIENTATION_LANDSCAPE
+                )
+                    CardImage(
+                        Modifier.fillMaxHeight(),
+                        card
+                    )
+                else
+                    CardImage(
+                        Modifier.fillMaxSize(),
+                        card
+                    )
             }
         }
     }
@@ -98,7 +101,11 @@ fun ColumnScope.CardImageSection() {
 
 @SuppressLint("DiscouragedApi")
 @Composable
-fun RowScope.CardImage(card: Int, viewModel: CardDealerViewModel = viewModel()) {
+fun CardImage(
+    modifier: Modifier,
+    card: Int,
+    viewModel: CardDealerViewModel = viewModel()
+) {
     val id = LocalContext.current.resources.getIdentifier(
         viewModel.getCardName(card),
         "drawable",
@@ -106,12 +113,9 @@ fun RowScope.CardImage(card: Int, viewModel: CardDealerViewModel = viewModel()) 
     )
 
     Image(
-        painter = painterResource(id = id),
+        painter = painterResource(id),
         contentDescription = "카드 이미지",
-        modifier = Modifier
-            .weight(1F)
-            .fillMaxSize()
-            .padding(4.dp)
+        modifier = modifier
     )
 }
 
