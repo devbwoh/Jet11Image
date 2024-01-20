@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -45,7 +47,11 @@ fun MainScreen(viewModel: CardDealerViewModel = viewModel()) {
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        Column {
+        Column(
+            modifier = Modifier
+                .background(Color(0xFF006600))
+                .padding(8.dp)
+        ) {
             CardImageSection()
             Button(
                 modifier = Modifier
@@ -73,9 +79,21 @@ fun ColumnScope.CardImageSection() {
                 CardImage(it)
             }
         }
+    } else {
+        Column(Modifier.weight(1F)) {
+            Row(Modifier.weight(1F).fillMaxSize()) {
+                CardImage(viewModel.cards[0])
+                CardImage(viewModel.cards[1])
+            }
+            Row(Modifier.weight(1F).fillMaxSize()) {
+                CardImage(viewModel.cards[2])
+                CardImage(viewModel.cards[3])
+            }
+            Row(Modifier.weight(1F).fillMaxSize()) {
+                CardImage(viewModel.cards[4])
+            }
+        }
     }
-    else
-        Text("세로")
 }
 
 @SuppressLint("DiscouragedApi")
